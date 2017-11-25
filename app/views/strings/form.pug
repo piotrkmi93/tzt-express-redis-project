@@ -1,1 +1,19 @@
 extends ../layout/layout
+block content
+  form(method="POST", action="/strings/save")
+    div(class="row")
+      div(class="col-md-6")
+        div(class="form-group")
+          label(for="kv-key") Klucz
+          input(id="kv-key", class="form-control", type="text", name="key", maxlength="20", placeholder="Klucz", value=kv.key)
+      div(class="col-md-6")
+        div(class="form-group")
+          label(for="kv-value") Wartość
+          input(id="kv-value", class="form-control", type="text", name="value", maxlength="255", placeholder="Wartość", value=kv.value)
+    div(class="row")
+      div(class="col-md-6")
+        div(class="form-group")
+          label(for="kv-time") Czas życia (w sekundach, -1 = wieczny)
+          input(id="kv-time", class="form-control", type="number", name="time", min="-1", step="1", placeholder="Czas życia (w sekundach, -1 = wieczny)", value=kv.time)
+      div(class="col-md-6")
+        button(class="btn btn-primary top25 pull-right", type="submit") Zapisz

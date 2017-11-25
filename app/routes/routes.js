@@ -1,7 +1,7 @@
-module.exports = app => {
+module.exports = (app, client) => {
 
     // modules routes
-    require("./strings")(app);
+    require("./strings")(app, client);
 
     // main routes
 

@@ -1,0 +1,28 @@
+.error {
+  color: red;
+}
+
+.top25 {
+  margin-top: 25px;
+}
+
+.navbar-header {
+  font-weight: bolder;
+}
+
+.navbar-header i {
+  width: 30px;
+}
+
+.nav.navbar-nav i {
+  width: 20px;
+}
+
+body{
+  background-image: linear-gradient(to top, #d299c2 0%, #fef9d7 100%);
+  min-height: 100vh
+}
+
+.navbar.navbar-default{
+  background-color: rgba(0,0,0,.3)
+}

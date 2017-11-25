@@ -3,27 +3,46 @@ html
     head
         title= title
         link(rel="stylesheet", href="/static/css/bootstrap.min.css")
+        link(rel="stylesheet", href="/static/css/font-awesome.min.css")
+        link(rel="stylesheet", href="/static/css/styles.css")
         script(src="/static/js/jquery-3.2.1.min.js")
         script(src="/static/js/bootstrap.min.js")
     body
         nav(class="navbar navbar-default")
             div(class="container-fluid")
                 div(class="navbar-header")
-                    a(href="#" class="navbar-brand") Sprawozdanie nr 1
+                    a(href="/" class="navbar-brand") 
+                      i(class="fa fa-code")
+                      span Sprawozdanie nr 1
                 ul(class="nav navbar-nav")
                     li(class="")
-                        a(href="/strings") 1. Ciągi znaków
+                        a(href="/strings") 
+                          i(class="fa fa-text-width")
+                          span Ciągi znaków
                     li(class="")
-                        a(href="#") 2. Listy
+                        a(href="#") 
+                          i(class="fa fa-list-ol")
+                          span Listy
                     li(class="")
-                        a(href="#") 3. Zbiory
+                        a(href="#") 
+                          i(class="fa fa-tasks")
+                          span Zbiory
                     li(class="")
-                        a(href="#") 4. Zbiory posortowane
+                        a(href="#") 
+                          i(class="fa fa-sort-amount-asc")
+                          span Zbiory posortowane
                     li(class="")
-                        a(href="#") 5. Tablice asocjacyjne
+                        a(href="#") 
+                          i(class="fa fa-table")
+                          span Tablice asocjacyjne
                     li(class="")
-                        a(href="#") 6. Bitmapy
+                        a(href="#") 
+                          i(class="fa fa-map-o")
+                          span Bitmapy
                     li(class="")
-                        a(href="#") 7. HyperLog
+                        a(href="#") 
+                          i(class="fa fa-bolt")
+                          span HyperLog
         div(class="container")
-            block content
+          h1= title
+          block content

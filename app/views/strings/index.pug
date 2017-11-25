@@ -1,3 +1,30 @@
 extends ../layout/layout
 block content
-    h1= title
+  div(class="row")
+    div(class="col-md-12")
+      table(class="table")
+        thead
+          tr
+            th Lp.
+            th Klucz
+            th Wartość
+            th Zniknie za
+            th Akcje
+        tbody
+          each kv, index in keys
+            tr
+              td= (index+1)+"."
+              td= kv.key
+              td= kv.value
+              td= kv.time
+              td
+                div(class="btn-group")
+                  a(href=`/strings/update/${kv.key}`, class="btn btn-primary btn-sm") 
+                    i(class="fa fa-edit")
+                  a(href=`/strings/delete/${kv.key}`, class="btn btn-danger btn-sm")
+                    i(class="fa fa-minus")
+                
+  div(class="row")
+    div(class="col-md-12 text-right")
+      a(href="strings/create", class="btn btn-success btn-lg")
+        i(class="fa fa-plus")
