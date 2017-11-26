@@ -1,0 +1,30 @@
+extends ../layout/layout
+block content
+  div(class="row")
+    div(class="col-md-12")
+      table(class="table")
+        thead
+          tr
+            th Lp.
+            th Klucz
+            th Ilość elementów
+            th Zniknie za
+            th Akcje
+        tbody
+          each kl, index in lists
+            tr
+              td= (index+1)+"."
+              td= kl.key
+              td= kl.size
+              td= kl.time
+              td
+                div(class="btn-group")
+                  a(href=`/lists/update/${kl.key}`, class="btn btn-primary btn-sm") 
+                    i(class="fa fa-edit")
+                  a(href=`/lists/delete/${kl.key}`, class="btn btn-danger btn-sm")
+                    i(class="fa fa-minus")
+                      
+  div(class="row")
+    div(class="col-md-12 text-right")
+      a(href="lists/create", class="btn btn-success btn-lg")
+        i(class="fa fa-plus")

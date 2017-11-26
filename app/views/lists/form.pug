@@ -1,0 +1,30 @@
+extends ../layout/layout
+block content
+  if(kl.items <= 0)
+    form(method="GET", action="/lists/create")
+      div(class="row")
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="kv-items") Ilość elementów
+            input(id="kl-items", class="form-control", type="number", name="items", min="1", step="1", placeholder="Ilość elementów", value=kl.items, required)
+        div(class="col-md-6")
+          button(class="btn btn-primary top25 pull-right", type="submit") Dalej
+  else
+    form(method="POST", action="/lists/save")
+      div(class="row")
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="kl-key") Klucz
+            input(id="kl-key", class="form-control", type="text", name="key", maxlength="20", placeholder="Klucz", value=kl.key, required)
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="kv-time") Czas życia (w sekundach, -1 = wieczny)
+            input(id="kl-time", class="form-control", type="number", name="time", min="-1", step="1", placeholder="Czas życia (w sekundach, -1 = wieczny)", value=kl.time, required)
+      - var i = 0;
+      while (++i) <= kl.items
+        div(class="row")
+          div(class="col-md-12")
+            div(class="form-group")
+              input(class="form-control", type="text", name="items[]", placeholder="Wartość " + i, required)
+      div(class="row")
+        button(class="btn btn-primary top25 pull-right", type="submit") Utwórz

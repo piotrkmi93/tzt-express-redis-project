@@ -1,48 +1,22 @@
-module.exports = (app, client) => {
+module.exports = (app, client, helpers) => {
 
     // public functions
 
     return {
 
         index: (req, res) => {
-          client.keys("*", (err, keys) => findNext(
+          client.keys("kv_*", (err, keys) => findNext(
             0,
             keys,
             keys => res.render("strings/index", {
                 title: "Ciągi znaków",
                 keys: keys
-                  .sort((a,b) => {
-                    if(a.time === -1) return 1;
-                    if(b.time === -1) return -1;
-                    return a.time > b.time
-                  })
-                  .map(k => {
-                    if(k.time !== -1){
-                      let seconds = k.time;
-
-                      let minutes = Math.floor(seconds / 60);
-                      seconds = seconds - (minutes * 60);
-
-                      let hours = Math.floor(minutes / 60);
-                      minutes = minutes - (hours * 60);
-
-                      let days = Math.floor(hours / 24);
-                      hours = hours - (days * 24);
-
-                      k.time = "";
-                      if(days) k.time += days+"d ";
-                      if(hours) k.time += hours+"h ";
-                      if(minutes) k.time += minutes+"m ";
-                      if(seconds) k.time += seconds+"s";
-                    } else k.time = "Nigdy"
-
-                    return k;
-                  })
-
+                  .sort(helpers.sortByTime)
+                  .map(helpers.humanTime)
+                  .map(helpers.withoutPrefix)
+                  .map(helpers.setCalculatable)
             }),
-            key => res.render("error", {
-              message: `Nie znaleziono klucza "${key}"`
-            })
+            key => helpers.throwError(res, `Nie znaleziono klucza "${key}"`)
           ));
         },
 
@@ -59,68 +33,73 @@ module.exports = (app, client) => {
 
         update: (req, res) => {
           find(
-            req.params && req.params.key || undefined,
+            req.params && "kv_"+req.params.key || undefined,
             kv => res.render("strings/form", {
-              kv: kv,
+              kv: helpers.withoutPrefix(kv),
               title: `Ciągi znaków - formularz edycji klucza "${kv.key}"`
             }),
-            key => res.render("error", {
-              message: `Nie znaleziono klucza "${key}"`
-            })
+            key => helpers.throwError(res, `Nie znaleziono klucza "${key}"`)
           );
         },
 
         delete: (req, res) => {
-
           find(
-            req.params && req.params.key || undefined,
+            req.params && "kv_"+req.params.key || undefined,
             kv => client.del(kv.key, (err, status) => {
               if(status === 1) res.redirect("/strings");
-              else {
-                res.render("error", {
-                  message: `Nie udało się usunąć klucza "${req.params.key}"`
-                })
-              }
+              else helpers.throwError(res, `Nie udało się usunąć klucza "${req.params.key}"`)
             }),
-            key => res.render("error", {
-              message: `Nie znaleziono klucza "${key}"`
-            })
-          )
-
+            key => helpers.throwError(res, `Nie znaleziono klucza "${key}"`)
+          );
         },
 
         save: (req, res) => {
           let key = req.body.key,
               value = req.body.value,
               time = Number(req.body.time);
-
           if(typeof key !== "string" || !key.length)
-            res.render("error", {
-              message: "Podano nieprawidłowy klucz"
-            });
+            helpers.throwError(res, "Podano nieprawidłowy klucz");
           else if(typeof value !== "string" || !value.length)
-            res.render("error", {
-              message: "Podano nieprawidłową wartość"
-            });
+            helpers.throwError(res, "Podano nieprawidłową wartość");
           else if(typeof time !== "number" || time < -1)
-            res.render("error", {
-              message: "Podano nieprawidłowy czas"
-            });
-          else
+            helpers.throwError(res, "Podano nieprawidłowy czas");
+          else {
+            key = (~key.indexOf("kv_")) ? key : "kv_" + key;
             client.set(key, value, (err, status) => {
               if(status === "OK"){
                 if(time > -1)
                   client.expire(key, time, (err, status2) => {
                     if(status === "OK") res.redirect("/strings");
-                    else res.render("error", {
-                      message: `Nie udało się ustawić czasu dla klucza`
-                    });
+                    else helpers.throwError(res, `Nie udało się ustawić czasu dla klucza`);
                   });
                 else res.redirect("/strings");
-              } else res.render("error", {
-                message: `Nie udało się zapisać klucza`
-              });
+              } else helpers.throwError(res, `Nie udało się zapisać klucza`);
             });
+          }
+        },
+
+        increment: (req, res) => {
+          find(
+            req.params && "kv_"+req.params.key || undefined,
+            kv => client.incr(kv.key, (err, status) => {
+              console.log(status);
+              if(typeof status !== "undefined") res.redirect("/strings");
+              else helpers.throwError(res, `Nie udało się inkrementować klucza "${req.params.key}"`)
+            }),
+            key => helpers.throwError(res, `Nie znaleziono klucza "${key}"`)
+          );
+        },
+
+        decrement: (req, res) => {
+          find(
+            req.params && "kv_"+req.params.key || undefined,
+            kv => client.decr(kv.key, (err, status) => {
+              console.log(status);
+              if(typeof status !== "undefined") res.redirect("/strings");
+              else helpers.throwError(res, `Nie udało się dekrementować klucza "${req.params.key}"`)
+            }),
+            key => helpers.throwError(res, `Nie znaleziono klucza "${key}"`)
+          );
         }
 
     };

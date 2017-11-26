@@ -19,10 +19,15 @@ block content
               td= kv.time
               td
                 div(class="btn-group")
+                  if kv.calculatable
+                    a(href=`/strings/increment/${kv.key}`, class="btn btn-warning btn-sm") 
+                      i(class="fa fa-plus")
+                    a(href=`/strings/decrement/${kv.key}`, class="btn btn-warning btn-sm") 
+                      i(class="fa fa-minus")  
                   a(href=`/strings/update/${kv.key}`, class="btn btn-primary btn-sm") 
                     i(class="fa fa-edit")
                   a(href=`/strings/delete/${kv.key}`, class="btn btn-danger btn-sm")
-                    i(class="fa fa-minus")
+                    i(class="fa fa-trash-o")
                 
   div(class="row")
     div(class="col-md-12 text-right")
