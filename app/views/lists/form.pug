@@ -1,12 +1,12 @@
 extends ../layout/layout
 block content
-  if(kl.items <= 0)
+  if kl.size <= 0
     form(method="GET", action="/lists/create")
       div(class="row")
         div(class="col-md-6")
           div(class="form-group")
             label(for="kv-items") Ilość elementów
-            input(id="kl-items", class="form-control", type="number", name="items", min="1", step="1", placeholder="Ilość elementów", value=kl.items, required)
+            input(id="kl-size", class="form-control", type="number", name="size", min="1", step="1", placeholder="Ilość elementów", value=kl.size, required)
         div(class="col-md-6")
           button(class="btn btn-primary top25 pull-right", type="submit") Dalej
   else
@@ -21,10 +21,39 @@ block content
             label(for="kv-time") Czas życia (w sekundach, -1 = wieczny)
             input(id="kl-time", class="form-control", type="number", name="time", min="-1", step="1", placeholder="Czas życia (w sekundach, -1 = wieczny)", value=kl.time, required)
       - var i = 0;
-      while (++i) <= kl.items
+      while (++i) <= kl.size
         div(class="row")
-          div(class="col-md-12")
+          div(class=(kl.updating?"col-md-11":"col-md-12"))
             div(class="form-group")
-              input(class="form-control", type="text", name="items[]", placeholder="Wartość " + i, required)
+              label= "Wartość " + i, value=kl.items[i-1]
+              input(class="form-control", type="text", name="items[]", placeholder="Wartość " + i, value=kl.items[i-1], required, disabled=kl.updating)
+          if kl.updating
+            div(class="col-md-1")
+              div(class="form-group")
+                a(href=`/lists/substract/${kl.key}/${kl.items[i-1]}`, class="btn btn-danger top25") 
+                  i(class="fa fa-trash")
       div(class="row")
-        button(class="btn btn-primary top25 pull-right", type="submit") Utwórz
+        button(class="btn btn-primary top25 pull-right", type="submit") Zapisz
+        
+      hr
+        
+  if kl.updating
+    form(method="POST", action="/lists/add")
+      input(type="hidden", name="key", value=kl.key)
+      div(class="row")
+        div(class="col-md-8")
+          div(class="form-group")
+            label Nowa wartość
+            input(class="form-control", type="text", name="item", placeholder="Nowa wartość", required)
+        div(class="col-md-3")
+          label
+            input(type="radio", name="push", value="lpush", checked) 
+            Dodaj na początek
+            br
+            input(type="radio", name="push", value="rpush") 
+            Dodaj na koniec
+        div(class="col-md-1")
+          button(class="btn btn-primary top25 pull-right", type="submit") Dodaj
+              
+        
+        

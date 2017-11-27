@@ -1,9 +1,13 @@
 module.exports = (app, client, helpers) => {
 
-    // public functions
-
     return {
 
+        /**
+         * Funkcja wyświetlająca wszystkie klucze razem z wartościami oraz czasem życia.
+         *
+         * @param  {Object} req
+         * @param  {Object} res
+         */
         index: (req, res) => {
           client.keys("kv_*", (err, keys) => findNext(
             0,
@@ -20,6 +24,12 @@ module.exports = (app, client, helpers) => {
           ));
         },
 
+        /**
+         * Formularz dodawania nowego klucza.
+         *
+         * @param  {Object} req
+         * @param  {Object} res
+         */
         create: (req, res) => {
           res.render("strings/form", {
             kv: {
@@ -31,6 +41,12 @@ module.exports = (app, client, helpers) => {
           })
         },
 
+        /**
+         * Formularz edycji klucza.
+         *
+         * @param  {Object} req
+         * @param  {Object} res
+         */
         update: (req, res) => {
           find(
             req.params && "kv_"+req.params.key || undefined,
@@ -42,6 +58,12 @@ module.exports = (app, client, helpers) => {
           );
         },
 
+        /**
+         * Usuwanie klucza.
+         *
+         * @param  {Object} req
+         * @param  {Object} res
+         */
         delete: (req, res) => {
           find(
             req.params && "kv_"+req.params.key || undefined,
@@ -53,6 +75,15 @@ module.exports = (app, client, helpers) => {
           );
         },
 
+        /**
+         * Zapisywanie klucza do bazy.
+         * Funkcja najpierw sprawdza przesłane wartości: key, value i time,
+         * jeśli któryś z nich jest nieprawidłowy to użytkownik przenoszony
+         * jest do strony z błędem.
+         *
+         * @param  {Object} req
+         * @param  {Object} res
+         */
         save: (req, res) => {
           let key = req.body.key,
               value = req.body.value,
@@ -78,6 +109,13 @@ module.exports = (app, client, helpers) => {
           }
         },
 
+        /**
+         * Jeżeli wartość klucza jest numeryczna to można ją inkrementować,
+         * ta funkcja odpowiada za wzrost tej wartości o 1.
+         *
+         * @param  {Object} req
+         * @param  {Object} res
+         */
         increment: (req, res) => {
           find(
             req.params && "kv_"+req.params.key || undefined,
@@ -90,6 +128,13 @@ module.exports = (app, client, helpers) => {
           );
         },
 
+        /**
+         * Jeżeli wartość klucza jest numeryczna to można ją dekrementowac,
+         * ta funkcja odpowiada za zmniejszenie tej wartości o 1.
+         *
+         * @param  {Object} req
+         * @param  {Object} res
+         */
         decrement: (req, res) => {
           find(
             req.params && "kv_"+req.params.key || undefined,
@@ -104,8 +149,16 @@ module.exports = (app, client, helpers) => {
 
     };
 
-    // private functions
-
+    /**
+     * Funkcja wyszukuje rekurencyjnie warości na podstawie kluczy w array.
+     * Jeśli skończą się elementy w tej tablicy to wykonywana jest
+     * funkcja resolve
+     *
+     * @param  {Number} index
+     * @param  {Array} array
+     * @param  {Function} resolve
+     * @param  {Function} reject
+     */
     function findNext(index, array, resolve, reject){
       if(typeof array[index] !== "undefined"){
         find(
@@ -119,6 +172,13 @@ module.exports = (app, client, helpers) => {
       } else resolve(array);
     }
 
+    /**
+     * Funkcja wyszukuje wartość na podstawie podanego klucza.
+     *
+     * @param  {String} key
+     * @param  {Function} resolve
+     * @param  {Function} reject
+     */
     function find(key, resolve, reject){
       if(typeof key !== "undefined"){
         client.get(key, (err, value) => {
@@ -128,6 +188,12 @@ module.exports = (app, client, helpers) => {
       }
     }
 
+    /**
+     * Funkcja wyszukująca czas życia klucza.
+     *
+     * @param  {Object} kv
+     * @param  {Function} resolve
+     */
     function findTimeLeft(kv, resolve){
       client.ttl(kv.key, (err, time) => {
         kv.time = time;

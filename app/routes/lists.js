@@ -6,10 +6,12 @@ module.exports = (app, client, helpers) => {
     // set actions
     app.get("/lists", ListController.index);
     app.get("/lists/create", ListController.create);
+    app.get("/lists/update/:key?", ListController.update);
 
     app.post("/lists/save", ListController.save);
-    // app.get("/strings/update/:key?", StringController.update);
-    // app.post("/strings/save", StringController.save);
-    // app.get("/strings/delete/:key?", StringController.delete)
+    app.get("/lists/delete/:key", ListController.delete);
+
+    app.post("/lists/add", ListController.add);
+    app.get("/lists/substract/:key/:item", ListController.substract);
 
 };
