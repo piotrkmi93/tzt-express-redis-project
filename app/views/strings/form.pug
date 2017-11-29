@@ -1,6 +1,8 @@
 extends ../layout/layout
 block content
   form(method="POST", action="/strings/save")
+    if !!kv.key
+      input(type="hidden", name="old_key", value=kv.key)
     div(class="row")
       div(class="col-md-6")
         div(class="form-group")
@@ -15,5 +17,11 @@ block content
         div(class="form-group")
           label(for="kv-time") Czas życia (w sekundach, -1 = wieczny)
           input(id="kv-time", class="form-control", type="number", name="time", min="-1", step="1", placeholder="Czas życia (w sekundach, -1 = wieczny)", value=kv.time, required)
-      div(class="col-md-6")
-        button(class="btn btn-primary top25 pull-right", type="submit") Zapisz
+      div(class="col-md-3")
+        a(class="btn btn-primary top25 btn-block", href="/strings/")
+          i(class="fa fa-hand-o-left")
+          span Wróć
+      div(class="col-md-3")
+        button(class="btn btn-success top25 btn-block", type="submit") 
+          i(class="fa fa-save")
+          span Zapisz

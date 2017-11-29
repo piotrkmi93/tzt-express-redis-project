@@ -18,11 +18,10 @@
   width: 20px;
 }
 
-/*body{
-  background-image: linear-gradient(to top, #d299c2 0%, #fef9d7 100%);
-  min-height: 100vh
+.btn i {
+  margin-right: 5px;
 }
 
-.navbar.navbar-default{
-  background-color: rgba(0,0,0,.3)
-}*/
+.fa.fa-no-margin{
+  margin-right: 0;
+}

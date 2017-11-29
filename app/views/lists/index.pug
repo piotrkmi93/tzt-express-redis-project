@@ -21,10 +21,13 @@ block content
                 div(class="btn-group")
                   a(href=`/lists/update/${kl.key}`, class="btn btn-primary btn-sm") 
                     i(class="fa fa-edit")
+                    span Edytuj
                   a(href=`/lists/delete/${kl.key}`, class="btn btn-danger btn-sm")
                     i(class="fa fa-trash")
+                    span Usuń
                       
   div(class="row")
-    div(class="col-md-12 text-right")
-      a(href="/lists/create", class="btn btn-success btn-lg")
+    div(class="col-md-offset-10 col-md-2")
+      a(href="/lists/create", class="btn btn-success btn-block")
         i(class="fa fa-plus")
+        span Nowa

@@ -1,6 +1,6 @@
 module.exports = (app, client, helpers) => {
 
-  return {
+  let self = {
 
     /**
      * Odpowiada za wyświetlenie listy list.
@@ -42,8 +42,7 @@ module.exports = (app, client, helpers) => {
           size: req.query.size || 0,
           items: [],
           time: -1
-        },
-        items: []
+        }
       });
     },
 
@@ -150,7 +149,9 @@ module.exports = (app, client, helpers) => {
     save: (req, res) => {
       let key = req.body.key,
           time = Number(req.body.time),
-          items = req.body.items;
+          items = req.body.items,
+          old_key = req.body.old_key;
+
       if(typeof key !== "string" || !key.length)
         helpers.throwError(res, "Podano nieprawidłowy klucz");
       else if(typeof time !== "number" || time < -1)
@@ -158,14 +159,31 @@ module.exports = (app, client, helpers) => {
       else if(typeof items === "undefined" || !items.length)
         helpers.throwError(res, "Podano nieprawidłowe wartości");
       else {
-        push(
-          "rpush",
-          "kl_"+key,
-          0,
-          items,
-          () =>  res.redirect("/lists"),
-          index => helpers.throwError(res, `Nie udało się zapisać wartości ${index}.`)
-        )
+        key = (~key.indexOf("kl_")) ? key : "kl_" + key;
+        old_key = (!!old_key ? ((~old_key.indexOf("kl_")) ? old_key : "kl_" + old_key) : undefined);
+        if(typeof old_key !== "undefined" && old_key !== key){
+          client.del(old_key, (err, status) => {
+            if(!err && typeof status !== "undefined"){
+              self.save({
+                body: {
+                  key: key,
+                  items: items,
+                  time: time
+                }
+              }, res);
+            } else
+              helpers.throwError(res, `Nie udało się zaktualizować klucza "${req.params.key}"`)
+          });
+        } else {
+          push(
+            "rpush",
+            key,
+            0,
+            items,
+            () =>  res.redirect("/lists"),
+            index => helpers.throwError(res, `Nie udało się zapisać wartości ${index}.`)
+          );
+        }
       }
     }
   };
@@ -275,5 +293,5 @@ module.exports = (app, client, helpers) => {
     });
   }
 
-
+  return self;
 };

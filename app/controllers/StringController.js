@@ -1,6 +1,6 @@
 module.exports = (app, client, helpers) => {
 
-    return {
+    let self = {
 
         /**
          * Funkcja wyświetlająca wszystkie klucze razem z wartościami oraz czasem życia.
@@ -68,7 +68,7 @@ module.exports = (app, client, helpers) => {
           find(
             req.params && "kv_"+req.params.key || undefined,
             kv => client.del(kv.key, (err, status) => {
-              if(status === 1) res.redirect("/strings");
+              if(typeof status !== "undefined") res.redirect("/strings");
               else helpers.throwError(res, `Nie udało się usunąć klucza "${req.params.key}"`)
             }),
             key => helpers.throwError(res, `Nie znaleziono klucza "${key}"`)
@@ -87,7 +87,8 @@ module.exports = (app, client, helpers) => {
         save: (req, res) => {
           let key = req.body.key,
               value = req.body.value,
-              time = Number(req.body.time);
+              time = Number(req.body.time),
+              old_key = req.body.old_key;
           if(typeof key !== "string" || !key.length)
             helpers.throwError(res, "Podano nieprawidłowy klucz");
           else if(typeof value !== "string" || !value.length)
@@ -96,16 +97,32 @@ module.exports = (app, client, helpers) => {
             helpers.throwError(res, "Podano nieprawidłowy czas");
           else {
             key = (~key.indexOf("kv_")) ? key : "kv_" + key;
-            client.set(key, value, (err, status) => {
-              if(status === "OK"){
-                if(time > -1)
-                  client.expire(key, time, (err, status2) => {
-                    if(status === "OK") res.redirect("/strings");
-                    else helpers.throwError(res, `Nie udało się ustawić czasu dla klucza`);
-                  });
-                else res.redirect("/strings");
-              } else helpers.throwError(res, `Nie udało się zapisać klucza`);
-            });
+            old_key = (!!old_key ? ((~old_key.indexOf("kv_")) ? old_key : "kv_" + old_key) : undefined);
+            if(typeof old_key !== "undefined" && old_key !== key){
+              client.del(old_key, (err, status) => {
+                if(!err && typeof status !== "undefined") {
+                  self.save({
+                    body: {
+                      key: key,
+                      value: value,
+                      time: time
+                    }
+                  }, res);
+                } else
+                  helpers.throwError(res, `Nie udało się zaktualizować klucza "${req.params.key}"`)
+              });
+            } else {
+              client.set(key, value, (err, status) => {
+                if(status === "OK"){
+                  if(time > -1)
+                    client.expire(key, time, (err, status2) => {
+                      if(status === "OK") res.redirect("/strings");
+                      else helpers.throwError(res, `Nie udało się ustawić czasu dla klucza`);
+                    });
+                  else res.redirect("/strings");
+                } else helpers.throwError(res, `Nie udało się zapisać klucza`);
+              });
+            }
           }
         },
 
@@ -201,4 +218,5 @@ module.exports = (app, client, helpers) => {
       });
     }
 
+    return self;
 };

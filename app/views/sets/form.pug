@@ -1,0 +1,63 @@
+extends ../layout/layout
+block content
+  if ks.size <= 0
+    form(method="GET", action="/sets/create")
+      div(class="row")
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="kv-items") Ilość elementów
+            input(id="ks-size", class="form-control", type="number", name="size", min="1", step="1", placeholder="Ilość elementów", value=ks.size, required)
+        div(class="col-md-6")
+          button(class="btn btn-primary top25 pull-right", type="submit") Dalej
+  else
+    form(method="POST", action="/sets/save")
+      if !!ks.key
+        input(type="hidden", name="old_key", value=ks.key)
+      div(class="row")
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="ks-key") ksucz
+            input(id="ks-key", class="form-control", type="text", name="key", maxlength="20", placeholder="ksucz", value=ks.key, required)
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="kv-time") Czas życia (w sekundach, -1 = wieczny)
+            input(id="ks-time", class="form-control", type="number", name="time", min="-1", step="1", placeholder="Czas życia (w sekundach, -1 = wieczny)", value=ks.time, required)
+      - var i = 0;
+      while (++i) <= ks.size
+        div(class="row")
+          div(class=(ks.updating?"col-md-11":"col-md-12"))
+            div(class="form-group")
+              label= "Wartość " + i, value=ks.items[i-1]
+              input(class="form-control", type="text", name="items[]", placeholder="Wartość " + i, value=ks.items[i-1], required)
+          if ks.updating
+            div(class="col-md-1")
+              div(class="form-group")
+                a(href=`/sets/substract/${ks.key}/${ks.items[i-1]}`, class="btn btn-danger btn-block top25") 
+                  i(class="fa fa-trash fa-no-margin")
+      div(class="row")
+        div(class="col-md-2")
+          a(class="btn top25 btn-primary btn-block", href="/sets") 
+            i(class="fa fa-hand-o-left")
+            span Wstecz
+        div(class="col-md-offset-8 col-md-2")
+          button(class="btn top25 btn-success btn-block", type="submit") 
+            i(class="fa fa-save")
+            span Zapisz
+        
+      hr
+        
+  if ks.updating
+    form(method="POST", action="/sets/add")
+      input(type="hidden", name="key", value=ks.key)
+      div(class="row")
+        div(class="col-md-10")
+          div(class="form-group")
+            label Nowa wartość
+            input(class="form-control", type="text", name="item", placeholder="Nowa wartość", required)
+        div(class="col-md-2")
+          button(class="btn btn-block btn-primary top25 btn-block", type="submit") 
+            i(class="fa fa-plus")
+            span Dodaj
+              
+        
+        

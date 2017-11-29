@@ -1,0 +1,62 @@
+extends ../layout/layout
+block content
+  div(class="row")
+    div(class="col-md-12")
+      table(class="table")
+        thead
+          tr
+            th Lp.
+            th Klucz
+            th Ilość elementów
+            th Zniknie za
+            th Akcje
+        tbody
+          each ks, index in sets
+            tr
+              td= (index+1)+"."
+              td= ks.key
+              td= ks.size
+              td= ks.time
+              td
+                div(class="btn-group")
+                  a(href=`/sets/update/${ks.key}`, class="btn btn-primary btn-sm") 
+                    i(class="fa fa-edit")
+                    span Edytuj
+                  a(href=`/sets/delete/${ks.key}`, class="btn btn-danger btn-sm")
+                    i(class="fa fa-trash")
+                    span Usuń
+                      
+  div(class="row")
+    div(class="col-md-offset-10 col-md-2")
+      a(href="/sets/create", class="btn btn-success btn-block") 
+        i(class="fa fa-plus")
+        span Nowy
+
+  if sets.length >= 2
+    form(action="/sets/operation", method="POST")
+      div(class="row")
+        h1 Operacje na zbiorach
+      div(class="row")
+        div(class="col-md-2 form-group")
+          label Pierwszy zbiór
+          select(class="form-control", name="source1", required)
+            each ks in sets
+              option(value=ks.key)= ks.key
+        div(class="col-md-2 form-group")
+          label Drugi zbiór
+          select(class="form-control", name="source2", required)
+            each ks in sets
+              option(value=ks.key)= ks.key
+        div(class="col-md-3 form-group")
+          label Nazwa zbioru wyjściowego
+          input(type="text", class="form-control" name="key", placeholder="Wpisz nazwę (wymagane)..." required)
+        div(class="col-md-3 form-group")
+          label Operacja
+          select(class="form-control", name="operation", required)
+            option(value="sdiffstore") SDIFFSTORE
+            option(value="sinterstore") SINTERSTORE 
+            option(value="sunionstore") SUNIONSTORE 
+        div(class="col-md-2")
+          button(class="btn btn-block btn-primary top25", type="submit") 
+            i(class="fa fa-wheelchair-alt") 
+            span Wykonaj

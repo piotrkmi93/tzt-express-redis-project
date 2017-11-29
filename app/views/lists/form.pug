@@ -11,6 +11,8 @@ block content
           button(class="btn btn-primary top25 pull-right", type="submit") Dalej
   else
     form(method="POST", action="/lists/save")
+      if !!kl.key
+        input(type="hidden", name="old_key", value=kl.key)
       div(class="row")
         div(class="col-md-6")
           div(class="form-group")
@@ -26,14 +28,21 @@ block content
           div(class=(kl.updating?"col-md-11":"col-md-12"))
             div(class="form-group")
               label= "Wartość " + i, value=kl.items[i-1]
-              input(class="form-control", type="text", name="items[]", placeholder="Wartość " + i, value=kl.items[i-1], required, disabled=kl.updating)
+              input(class="form-control", type="text", name="items[]", placeholder="Wartość " + i, value=kl.items[i-1], required)
           if kl.updating
             div(class="col-md-1")
               div(class="form-group")
-                a(href=`/lists/substract/${kl.key}/${kl.items[i-1]}`, class="btn btn-danger top25") 
-                  i(class="fa fa-trash")
+                a(href=`/lists/substract/${kl.key}/${kl.items[i-1]}`, class="btn btn-danger btn-block top25") 
+                  i(class="fa fa-trash fa-no-margin")
       div(class="row")
-        button(class="btn btn-primary top25 pull-right", type="submit") Zapisz
+        div(class="col-md-2")
+          a(class="btn btn-primary top25 btn-block", href="/lists")
+            i(class="fa fa-hand-o-left")
+            span Wróć
+        div(class="col-md-offset-8 col-md-2")
+          button(class="btn btn-success top25 btn-block", type="submit") 
+            i(class="fa fa-save")
+            span Zapisz
         
       hr
         
@@ -45,15 +54,19 @@ block content
           div(class="form-group")
             label Nowa wartość
             input(class="form-control", type="text", name="item", placeholder="Nowa wartość", required)
-        div(class="col-md-3")
-          label
-            input(type="radio", name="push", value="lpush", checked) 
-            Dodaj na początek
-            br
-            input(type="radio", name="push", value="rpush") 
-            Dodaj na koniec
-        div(class="col-md-1")
-          button(class="btn btn-primary top25 pull-right", type="submit") Dodaj
+        div(class="col-md-2")
+          div(class="radio")
+            label
+              input(type="radio", name="push", value="lpush", checked) 
+              Dodaj na początek
+          div(class="radio")
+            label
+              input(type="radio", name="push", value="rpush") 
+              Dodaj na koniec
+        div(class="col-md-2")
+          button(class="btn btn-primary top25 btn-block", type="submit") 
+            i(class="fa fa-plus")
+            span Dodaj
               
         
         
