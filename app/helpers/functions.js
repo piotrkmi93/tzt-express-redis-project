@@ -139,6 +139,14 @@ module.exports = (app, client) => {
         if(status) resolve();
         else self.throwError(res, `Nie udało się ustawić czasu dla klucza ${key}`);
       })
+    },
+
+    bitToInt: (bits) => {
+      let val = 0;
+      for(let i=bits.length-1; i>=0; --i){
+        val += Number(bits[i]) * Math.pow(2, i);
+      }
+      return val;
     }
 
   };
