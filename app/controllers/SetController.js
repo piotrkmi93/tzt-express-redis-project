@@ -39,7 +39,7 @@ module.exports = (app, client, helpers) => {
             title: `Edycja zbioru "${ks.key}"`
           });
         },
-        key => helpers.throwError(res, `Nie znaleziono ksucza "${key}"`)
+        key => helpers.throwError(res, `Nie znaleziono Klucza "${key}"`)
       );
     },
 
@@ -78,7 +78,7 @@ module.exports = (app, client, helpers) => {
           time = Number(req.body.time),
           items = req.body.items;
           if(typeof key !== "string" || !key.length)
-            helpers.throwError(res, "Podano nieprawidłowy ksucz");
+            helpers.throwError(res, "Podano nieprawidłowy Klucz");
           else if(typeof time !== "number" || time < -1)
             helpers.throwError(res, "Podano nieprawidłowy czas");
           else if(typeof items === "undefined" || !items.length)
@@ -86,7 +86,7 @@ module.exports = (app, client, helpers) => {
           else {
             key = (~key.indexOf("ks_")) ? key : "ks_" + key;
             old_key = (!!old_key ? ((~old_key.indexOf("ks_")) ? old_key : "ks_" + old_key) : undefined);
-            if(typeof old_key !== "undefined" && old_key !== key){
+            if(typeof old_key !== "undefined"){
               client.del(old_key, (err, status) => {
                 if(!err && typeof status !== "undefined"){
                   self.save({
@@ -115,7 +115,7 @@ module.exports = (app, client, helpers) => {
       client.del(
         "ks_"+req.params.key,
         (err, status) => {
-          if(err) helpers.throwError(res, "Nie udało się usunąć listy");
+          if(err) helpers.throwError(res, "Nie udało się usunąć zbioru");
           else res.redirect("/sets/")
         });
     },
@@ -142,9 +142,6 @@ module.exports = (app, client, helpers) => {
           "ks_" + source1,
           "ks_" + source2,
           (err, status) => {
-            console.log(err);
-            console.log(status);
-
             if(typeof status !== "undefined")
               res.redirect("/sets/update/"+key)
             else

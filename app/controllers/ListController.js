@@ -161,7 +161,7 @@ module.exports = (app, client, helpers) => {
       else {
         key = (~key.indexOf("kl_")) ? key : "kl_" + key;
         old_key = (!!old_key ? ((~old_key.indexOf("kl_")) ? old_key : "kl_" + old_key) : undefined);
-        if(typeof old_key !== "undefined" && old_key !== key){
+        if(typeof old_key !== "undefined"){
           client.del(old_key, (err, status) => {
             if(!err && typeof status !== "undefined"){
               self.save({

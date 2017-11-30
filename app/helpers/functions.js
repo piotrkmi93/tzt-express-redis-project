@@ -1,13 +1,37 @@
 module.exports = (app, client) => {
 
+  const prefixes = [
+    "kv_",  // strings
+    "kl_",  // lists
+    "ks_",  // sets
+    "kss_", // sorted sets
+    "kh_",  // hashes
+    "kb_",  // bitmaps
+    "khl_"  // hyperlogs
+  ];
+
   return {
 
+    /**
+     * Funkcja do sortowania elementów
+     * od najkrócej żyjącego do najdłużej.
+     * Jeśli element nigdy nie umrze to jest wstawiany na koniec.
+     *
+     * @param  {Object} a
+     * @param  {Object} b
+     */
     sortByTime: (a, b) => {
       if(a.time === -1) return 1;
       if(b.time === -1) return -1;
       return a.time > b.time
     },
 
+    /**
+     * Funckja przekształca czas w sekundach na format
+     * tygodnie, dni, godziny, minuty, sekundy
+     *
+     * @param  {Object} obj
+     */
     humanTime: obj => {
       if(obj && obj.time){
         if(obj.time === -1)
@@ -20,7 +44,10 @@ module.exports = (app, client) => {
           minutes = minutes - (hours * 60);
           let days = Math.floor(hours / 24);
           hours = hours - (days * 24);
+          let weeks = Math.floor(days / 7);
+          days = days - (days * 7);
           obj.time = "";
+          if(weeks) ob.time += weeks+"w ";
           if(days) obj.time += days+"d ";
           if(hours) obj.time += hours+"h ";
           if(minutes) obj.time += minutes+"m ";
@@ -30,23 +57,61 @@ module.exports = (app, client) => {
       return obj;
     },
 
+    /**
+     * Funckja usuwa prefix z klucza
+     *
+     * @param  {Object} obj
+     */
     withoutPrefix: obj => {
       if(obj && obj.key){
-        obj.key = (String(obj.key)).slice(3);
-        return obj;
+        obj.key = String(obj.key);
+        for(prefix of prefixes){
+          if(!obj.key.indexOf(prefix)){
+            obj.key = obj.key.slice(prefix.length);
+            return obj;
+          }
+        }
       }
     },
 
+    /**
+     * Ustawia w obiekcie wartość calculatable,
+     * jeśli wartość klucza jest numeryczna,
+     * można ją wówczas inkrementować i dekrementować
+     *
+     * @param {Object} obj
+     */
     setCalculatable: obj => {
       if(obj && obj.value)
         obj.calculatable = !!Number(obj.value);
       return obj;
     },
 
+    /**
+     * Przenosi użytkownika na stronę błędu i wyświetla wiadomość
+     *
+     * @param  {Objecy} res
+     * @param  {String} message
+     */
     throwError: (res, message) => {
       res.render("error", {
         message: message
       });
+    },
+
+    /**
+     * Funkcja przydatna do sorted_sets,
+     * tworzy tablicę obiektów z wartościami i wagami
+     *
+     * @param  {Array} items
+     */
+    optimizeSortedSetItems: items => {
+      let ret = [];
+      for(let i=0; i<items.length; ++i){
+        if(i%2) ret[ret.length-1].value = items[i];
+        else ret.push({ score: items[i] });
+      }
+      return ret;
     }
 
   };

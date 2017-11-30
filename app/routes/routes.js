@@ -7,7 +7,7 @@ module.exports = (app, client) => {
     require("./strings")(app, client, helpers);
     require("./lists")(app, client, helpers);
     require("./sets")(app, client, helpers);
-    // require("./sorted_sets")(app, client, helpers);
+    require("./sorted_sets")(app, client, helpers);
     // require("./hashes")(app, client, helpers);
     // require("./bitmaps")(app, client, helpers);
     // require("./hyperlogs")(app, client, helpers);

@@ -7,42 +7,43 @@ html
         link(rel="stylesheet", href="/static/css/styles.css")
         script(src="/static/js/jquery-3.2.1.min.js")
         script(src="/static/js/bootstrap.min.js")
+        script(src="/static/js/scripts.js")
     body
-        nav(class="navbar navbar-default")
-            div(class="container-fluid")
-                div(class="navbar-header")
-                    a(href="/" class="navbar-brand") 
-                      i(class="fa fa-code")
-                      span Sprawozdanie nr 1
-                ul(class="nav navbar-nav")
-                    li(class="")
-                        a(href="/strings") 
-                          i(class="fa fa-text-width")
-                          span Ciągi znaków
-                    li(class="")
-                        a(href="/lists") 
-                          i(class="fa fa-list-ol")
-                          span Listy
-                    li(class="")
-                        a(href="/sets") 
-                          i(class="fa fa-tasks")
-                          span Zbiory
-                    li(class="")
-                        a(href="/sorted_sets") 
-                          i(class="fa fa-sort-amount-asc")
-                          span Zbiory posortowane
-                    li(class="")
-                        a(href="/hashes") 
-                          i(class="fa fa-table")
-                          span Tablice asocjacyjne
-                    li(class="")
-                        a(href="/bitmaps") 
-                          i(class="fa fa-map-o")
-                          span Bitmapy
-                    li(class="")
-                        a(href="/hyperlogs") 
-                          i(class="fa fa-bolt")
-                          span HyperLog
-        div(class="container")
-          h1= title
-          block content
+      nav(class="navbar navbar-default")
+        div(class="container-fluid")
+            div(class="navbar-header")
+              a(href="/" class="navbar-brand") 
+                i(class="fa fa-code")
+                span Sprawozdanie nr 1
+            ul(class="nav navbar-nav")
+              li
+                a(href="/strings") 
+                  i(class="fa fa-text-width")
+                  span Ciągi znaków
+              li
+                a(href="/lists") 
+                  i(class="fa fa-list-ol")
+                  span Listy
+              li
+                a(href="/sets") 
+                  i(class="fa fa-tasks")
+                  span Zbiory
+              li
+                a(href="/sorted_sets") 
+                  i(class="fa fa-sort-amount-asc")
+                  span Zbiory posortowane
+              li
+                a(href="/hashes") 
+                  i(class="fa fa-table")
+                  span Tablice asocjacyjne
+              li
+                a(href="/bitmaps") 
+                  i(class="fa fa-map-o")
+                  span Bitmapy
+              li
+                a(href="/hyperlogs") 
+                  i(class="fa fa-bolt")
+                  span HyperLog
+      div(class="container")
+        h1= title
+        block content

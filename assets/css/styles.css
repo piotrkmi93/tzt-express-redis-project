@@ -25,3 +25,10 @@
 .fa.fa-no-margin{
   margin-right: 0;
 }
+
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>.active>a:hover{
+  color: #fff;
+  background-color: #3e3e3e;
+}

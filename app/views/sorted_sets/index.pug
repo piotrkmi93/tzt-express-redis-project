@@ -1,0 +1,61 @@
+extends ../layout/layout
+block content
+  div(class="row")
+    div(class="col-md-12")
+      table(class="table")
+        thead
+          tr
+            th Lp.
+            th Klucz
+            th Ilość elementów
+            th Zniknie za
+            th Akcje
+        tbody
+          each kss, index in sorted_sets
+            tr
+              td= (index+1)+"."
+              td= kss.key
+              td= kss.size
+              td= kss.time
+              td
+                div(class="btn-group")
+                  a(href=`/sorted_sets/update/${kss.key}`, class="btn btn-primary btn-sm") 
+                    i(class="fa fa-edit")
+                    span Edytuj
+                  a(href=`/sorted_sets/delete/${kss.key}`, class="btn btn-danger btn-sm")
+                    i(class="fa fa-trash")
+                    span Usuń
+                    
+  div(class="row")
+    div(class="col-md-offset-10 col-md-2")
+      a(href="/sorted_sets/create", class="btn btn-success btn-block") 
+        i(class="fa fa-plus")
+        span Nowy
+        
+  if sorted_sets.length >= 2
+    form(action="/sorted_sets/operation", method="POST")
+      div(class="row")
+        h1 Operacje na zbiorach
+      div(class="row")
+        div(class="col-md-2 form-group")
+          label Pierwszy zbiór
+          select(class="form-control", name="source1", required)
+            each kss in sorted_sets
+              option(value=kss.key)= kss.key
+        div(class="col-md-2 form-group")
+          label Drugi zbiór
+          select(class="form-control", name="source2", required)
+            each kss in sorted_sets
+              option(value=kss.key)= kss.key
+        div(class="col-md-3 form-group")
+          label Nazwa zbioru wyjściowego
+          input(type="text", class="form-control" name="key", placeholder="Wpisz nazwę (wymagane)..." required)
+        div(class="col-md-3 form-group")
+          label Operacja
+          select(class="form-control", name="operation", required)
+            option(value="zinterstore") ZINTERSTORE
+            option(value="zunionstore") ZUNIONSTORE 
+        div(class="col-md-2")
+          button(class="btn btn-block btn-primary top25", type="submit") 
+            i(class="fa fa-wheelchair-alt") 
+            span Wykonaj

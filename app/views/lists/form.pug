@@ -44,9 +44,8 @@ block content
             i(class="fa fa-save")
             span Zapisz
         
-      hr
-        
   if kl.updating
+    hr
     form(method="POST", action="/lists/add")
       input(type="hidden", name="key", value=kl.key)
       div(class="row")
