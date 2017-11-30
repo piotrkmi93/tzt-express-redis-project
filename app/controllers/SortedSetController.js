@@ -85,7 +85,11 @@ module.exports = (app, client, helpers) => {
             0,
             values,
             scores,
-            () => res.redirect("/sorted_sets"),
+            () => {
+              if(time > -1){
+                helpers.expire(key, time, () => res.redirect("/sorted_sets"), res);
+              } else res.redirect("/sorted_sets");
+            },
             index => helpers.throwError(res, `Nie udało się zapisać wartości ${index}.`)
           )
         }
@@ -213,8 +217,8 @@ module.exports = (app, client, helpers) => {
   function zrange(key, resolve, reject, withscores = false, start = 0, end = -1){
     client.zrange(key, start, end, "WITHSCORES", (err, items) => {
       if(items && items.length) {
-        items = helpers.optimizeSortedSetItems(items);
-        findTimeLeft({
+        items = helpers.optimizeItems(items, "score", "value");
+        helpers.findTimeLeft({
           key: key,
           items: items,
           size: items.length
@@ -223,12 +227,6 @@ module.exports = (app, client, helpers) => {
     });
   }
 
-  function findTimeLeft(kss, resolve){
-    client.ttl(kss.key, (err, time) => {
-      kss.time = time;
-      resolve(kss);
-    });
-  }
 
   return self;
 

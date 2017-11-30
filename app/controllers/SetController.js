@@ -104,7 +104,11 @@ module.exports = (app, client, helpers) => {
                 key,
                 0,
                 items,
-                () => res.redirect("/sets"),
+                () => {
+                  if(time > -1){
+                    helpers.expire(key, time, () => res.redirect("/sets"), res);
+                  } else res.redirect("/sets");
+                },
                 index => helpers.throwError(res, `Nie udało się zapisać wartości ${index}.`)
               );
             }
@@ -142,7 +146,7 @@ module.exports = (app, client, helpers) => {
           "ks_" + source1,
           "ks_" + source2,
           (err, status) => {
-            if(typeof status !== "undefined")
+            if(status)
               res.redirect("/sets/update/"+key)
             else
               helpers.throwError(res, "Nie udało się wykonać operacji.");
@@ -195,7 +199,7 @@ module.exports = (app, client, helpers) => {
 
   function smembers(key, resolve, reject){
     client.smembers(key, (err, items) => {
-      if(items && items.length) findTimeLeft({
+      if(items && items.length) helpers.findTimeLeft({
           key: key,
           items: items,
           size: items.length
@@ -203,14 +207,6 @@ module.exports = (app, client, helpers) => {
       else reject(key);
     });
   }
-
-  function findTimeLeft(ks, resolve){
-    client.ttl(ks.key, (err, time) => {
-      ks.time = time;
-      resolve(ks);
-    });
-  }
-
 
   return self;
 };

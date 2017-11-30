@@ -115,10 +115,7 @@ module.exports = (app, client, helpers) => {
               client.set(key, value, (err, status) => {
                 if(status === "OK"){
                   if(time > -1)
-                    client.expire(key, time, (err, status2) => {
-                      if(status === "OK") res.redirect("/strings");
-                      else helpers.throwError(res, `Nie udało się ustawić czasu dla klucza`);
-                    });
+                    helpers.expire(key, time, () => res.redirect("/strings"), res);
                   else res.redirect("/strings");
                 } else helpers.throwError(res, `Nie udało się zapisać klucza`);
               });
@@ -199,24 +196,13 @@ module.exports = (app, client, helpers) => {
     function find(key, resolve, reject){
       if(typeof key !== "undefined"){
         client.get(key, (err, value) => {
-          if(!!value) findTimeLeft({ key: key, value: value }, resolve);
+          if(!!value)
+            helpers.findTimeLeft({ key: key, value: value }, resolve);
           else reject(key);
         });
       }
     }
 
-    /**
-     * Funkcja wyszukująca czas życia klucza.
-     *
-     * @param  {Object} kv
-     * @param  {Function} resolve
-     */
-    function findTimeLeft(kv, resolve){
-      client.ttl(kv.key, (err, time) => {
-        kv.time = time;
-        resolve(kv);
-      });
-    }
 
     return self;
 };

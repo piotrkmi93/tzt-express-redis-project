@@ -1,0 +1,33 @@
+extends ../layout/layout
+block content
+  div(class="row")
+    div(class="col-md-12")
+      table(class="table")
+        thead
+          tr
+            th Lp.
+            th khucz
+            th Ilość elementów
+            th Zniknie za
+            th Akcje
+        tbody
+          each kh, index in hashes
+            tr
+              td= (index+1)+"."
+              td= kh.key
+              td= kh.size
+              td= kh.time
+              td
+                div(class="btn-group")
+                  a(href=`/hashes/update/${kh.key}`, class="btn btn-primary btn-sm") 
+                    i(class="fa fa-edit")
+                    span Edytuj
+                  a(href=`/hashes/delete/${kh.key}`, class="btn btn-danger btn-sm")
+                    i(class="fa fa-trash")
+                    span Usuń
+                      
+  div(class="row")
+    div(class="col-md-offset-10 col-md-2")
+      a(href="/hashes/create", class="btn btn-success btn-block")
+        i(class="fa fa-plus")
+        span Nowa

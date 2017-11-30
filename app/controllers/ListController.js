@@ -180,7 +180,11 @@ module.exports = (app, client, helpers) => {
             key,
             0,
             items,
-            () =>  res.redirect("/lists"),
+            () =>  {
+              if(time > -1){
+                helpers.expire(key, time, () => res.redirect("/lists"), res);
+              } else res.redirect("/lists");
+            },
             index => helpers.throwError(res, `Nie udało się zapisać wartości ${index}.`)
           );
         }
@@ -254,25 +258,11 @@ module.exports = (app, client, helpers) => {
       start,
       end,
       (err, items) => {
-        if(items && items.length) findTimeLeft({ key: key, items: items, size: items.length }, resolve);
+        if(items && items.length)
+          helpers.findTimeLeft({ key: key, items: items, size: items.length }, resolve);
         else reject(key);
       }
     );
-  }
-
-  /**
-   * Funkcja dodaje do obiektu kl property time,
-   * który oznacza ile czasu będzie jeszcze żył ten obiekt.
-   * -1 oznacza wieczność.
-   *
-   * @param  {Object} kl
-   * @param  {Function} resolve
-   */
-  function findTimeLeft(kl, resolve){
-    client.ttl(kl.key, (err, time) => {
-      kl.time = time;
-      resolve(kl);
-    });
   }
 
   /**

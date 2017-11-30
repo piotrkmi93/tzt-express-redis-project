@@ -10,7 +10,7 @@ module.exports = (app, client) => {
     "khl_"  // hyperlogs
   ];
 
-  return {
+  let self = {
 
     /**
      * Funkcja do sortowania elementów
@@ -45,9 +45,9 @@ module.exports = (app, client) => {
           let days = Math.floor(hours / 24);
           hours = hours - (days * 24);
           let weeks = Math.floor(days / 7);
-          days = days - (days * 7);
+          days = days - (weeks * 7);
           obj.time = "";
-          if(weeks) ob.time += weeks+"w ";
+          if(weeks) obj.time += weeks+"w ";
           if(days) obj.time += days+"d ";
           if(hours) obj.time += hours+"h ";
           if(minutes) obj.time += minutes+"m ";
@@ -105,15 +105,44 @@ module.exports = (app, client) => {
      *
      * @param  {Array} items
      */
-    optimizeSortedSetItems: items => {
+    optimizeItems: (items, left, right) => {
       let ret = [];
       for(let i=0; i<items.length; ++i){
-        if(i%2) ret[ret.length-1].value = items[i];
-        else ret.push({ score: items[i] });
+        if(i%2) ret[ret.length-1][left] = items[i];
+        else {
+          ret.push({});
+          ret[ret.length-1][right] = items[i];
+        }
       }
       return ret;
+    },
+
+    objectToArray: (items, left, right) => {
+      let ret = []
+      for(let key in items) {
+        ret.push({});
+        ret[ret.length-1][left] = key;
+        ret[ret.length-1][right] = items[key];
+      }
+      return ret;
+    },
+
+    findTimeLeft: (obj, resolve) => {
+      client.ttl(obj.key, (err, time) => {
+        obj.time = time;
+        resolve(obj);
+      });
+    },
+
+    expire: (key, time, resolve, res) => {
+      client.expire(key, time, (err, status) => {
+        if(status) resolve();
+        else self.throwError(res, `Nie udało się ustawić czasu dla klucza ${key}`);
+      })
     }
 
   };
+
+  return self;
 
 };
