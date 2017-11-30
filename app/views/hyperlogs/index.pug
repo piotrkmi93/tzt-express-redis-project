@@ -1,0 +1,52 @@
+extends ../layout/layout
+block content
+  div(class="row")
+    div(class="col-md-12")
+      table(class="table")
+        thead
+          tr
+            th Lp.
+            th Klucz
+            th Ilość elementów
+            th Akcje
+        tbody
+          each khl, index in hyperlogs
+            tr
+              td= (index+1)+"."
+              td= khl.key
+              td= khl.size
+              td
+                div(class="btn-group")
+                  a(href=`/hyperlogs/delete/${khl.key}`, class="btn btn-danger btn-sm")
+                    i(class="fa fa-trash-o")
+                    span Usuń
+                
+  div(class="row")
+    div(class="col-md-offset-10 col-md-2")
+      a(href="/hyperlogs/create", class="btn btn-success btn-block")
+        i(class="fa fa-plus")
+        span Nowy
+  
+  
+  if hyperlogs.length >= 2
+    form(action="/hyperlogs/merge", method="POST")
+      div(class="row")
+        h1 Merdżowanie
+      div(class="row")
+        div(class="col-md-3 form-group")
+          label Pierwszy HyperLogLog
+          select(class="form-control", name="source1", required)
+            each khl in hyperlogs
+              option(value=khl.key)= khl.key
+        div(class="col-md-3 form-group")
+          label Drugi HyperLogLog
+          select(class="form-control", name="source2", required)
+            each khl in hyperlogs
+              option(value=khl.key)= khl.key
+        div(class="col-md-3 form-group")
+          label Nazwa nowego HyperLogLoga
+          input(type="text", class="form-control" name="target", placeholder="Wpisz nazwę (wymagane)..." required)
+        div(class="col-md-3")
+          button(class="btn btn-block btn-primary top25", type="submit") 
+            i(class="fa fa-wheelchair-alt") 
+            span Wykonaj

@@ -10,7 +10,7 @@ module.exports = (app, client) => {
     require("./sorted_sets")(app, client, helpers);
     require("./hashes")(app, client, helpers);
     require("./bitmaps")(app, client, helpers);
-    // require("./hyperlogs")(app, client, helpers);
+    require("./hyperlogs")(app, client, helpers);
 
     // main routes
     app.get('/', (req, res) =>

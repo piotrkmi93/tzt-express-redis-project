@@ -1,0 +1,36 @@
+extends ../layout/layout
+block content
+  if khl.size <= 0
+    form(method="GET", action="/hyperlogs/create")
+      div(class="row")
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="kv-items") Ilość elementów
+            input(id="khl-size", class="form-control", type="number", name="size", min="1", step="1", placeholder="Ilość elementów", value=khl.size, required)
+        div(class="col-md-6")
+          button(class="btn btn-primary top25 pull-right", type="submit") Dalej
+  else
+    form(method="POST", action="/hyperlogs/save")
+      if !!khl.key
+        input(type="hidden", name="old_key", value=khl.key)
+      div(class="row")
+        div(class="col-md-6")
+          div(class="form-group")
+            label(for="khl-key") khlucz
+            input(id="khl-key", class="form-control", type="text", name="key", maxlength="20", placeholder="khlucz", value=khl.key, required)
+      - var i = 0;
+      while (++i) <= khl.size
+        div(class="row")
+          div(class="col-md-12")
+            div(class="form-group")
+              label= "Wartość " + i
+              input(class="form-control", type="text", name="items[]", placeholder="Wartość " + i, required)
+      div(class="row")
+        div(class="col-md-2")
+          a(class="btn btn-primary top25 btn-block", href="/hyperlogs")
+            i(class="fa fa-hand-o-left")
+            span Wróć
+        div(class="col-md-offset-8 col-md-2")
+          button(class="btn btn-success top25 btn-block", type="submit") 
+            i(class="fa fa-save")
+            span Zapisz
